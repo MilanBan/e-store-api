@@ -51,7 +51,7 @@ class AuthController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|between:2,100',
             'email' => 'required|string|email|max:100|unique:users',
-            'password' => 'required|string|confirmed|min:6',
+            'password' => 'required|string|confirmed|min:8',
         ]);
 
         if($validator->fails()){
@@ -63,9 +63,14 @@ class AuthController extends Controller
                     ['password' => bcrypt($request->password)]
                 ));
 
+        $managerInput = $request->except('password', 'confirm_password');
+        $managerInput['image'] = 'https://thebenclark.files.wordpress.com/2014/03/facebook-default-no-profile-pic.jpg'
+        $managerInput['user_id'] = $user->id;
+        // Manager::create($request->all()->except('password', 'confirm_password'));
+
         return response()->json([
             'message' => 'User successfully registered',
-            'user' => $user
+            'user' => $user,
         ], 201);
     }
 
